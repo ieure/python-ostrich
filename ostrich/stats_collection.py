@@ -1,5 +1,6 @@
 import threading
 
+
 from ostrich.stats_provider import StatsProvider
 from ostrich.timing import Timing
 
@@ -18,11 +19,11 @@ class StatsCollection(StatsProvider):
 
     def get_counter_stats(self, reset=False):
         with self.counters_lock:
-            return dict(map(lambda (k, counter): (k, counter.get(reset)), self.counters.items()))
+            return dict((k, counter.get(reset)) for (k, counter) in self.counters.iteritems()))
 
     def get_timing_stats(self, reset=False):
         with self.timings_lock:
-            return dict(map(lambda (k, timing): (k, timing.get(reset)), self.timings.items()))
+            return dict((k, timing.get(reset)) for (k, timing) in self.timings.iteritems())
 
     def get_counter(self, name):
         counter = self.counters.get(name, None)
