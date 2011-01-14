@@ -12,12 +12,12 @@ class TimeSeriesCollectorTest(unittest.TestCase):
     def setUp(self):
         stats.clear_all()
         self.collector = TimeSeriesCollector()
-    
+
     @mock.patch("time.time")
     def test_report_basic_stats(self, mock_time):
         my_time = real_time()
         mock_time.return_value = my_time
-        
+
         stats.incr("cats")
         stats.incr("dogs", 3)
         self.collector.collect()
@@ -25,9 +25,9 @@ class TimeSeriesCollectorTest(unittest.TestCase):
         mock_time.return_value = my_time
         stats.incr("dogs")
         self.collector.collect()
-        
+
         data = self.collector.get("counter:dogs")
         self.assertEquals((int(my_time - (2 * 60)), 0), data[57])
         self.assertEquals((int(my_time - 60), 3), data[58])
         self.assertEquals((int(my_time), 1), data[59])
-    
+

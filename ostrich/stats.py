@@ -7,48 +7,48 @@ class Stats(StatsProvider):
         self.gauges = {}
         self.collection = StatsCollection()
         self.forked_collections = []
-    
+
     def add_timing(self, name, timing):
         map(lambda c: c.add_timing(name, timing), self.forked_collections)
         return self.collection.add_timing(name, timing)
-    
+
     def incr(self, name, count=1):
         map(lambda c: c.incr(name, count), self.forked_collections)
         return self.collection.incr(name, count)
-    
+
     def get_counter_stats(self, reset=False):
         return self.collection.get_counter_stats(reset)
-    
+
     def get_timing_stats(self, reset=False):
         return self.collection.get_timing_stats(reset)
-    
+
     def get_gauge_stats(self):
         return dict(map(lambda (k, gauge): (k, gauge()), self.gauges.items()))
-    
+
     def get_timing(self, name):
         # make sure any new timings get added to forked collections
         map(lambda c: c.get_timing(name), self.forked_collections)
         return self.collection.get_timing(name)
-    
+
     def get_counter(self, name):
         # make sure any new counters get added to forked collections
         map(lambda c: c.get_counter(name), self.forked_collections)
         return self.collection.get_counter(name)
-    
+
     def stats(self, reset=False):
-        d = self.collection.stats(reset) 
+        d = self.collection.stats(reset)
         d.update(gauges=self.get_gauge_stats())
         return d
-    
+
     def clear_all(self):
         map(lambda c: c.clear_all(), self.forked_collections)
         del self.forked_collections[:]
         self.collection.clear_all()
         self.gauges.clear()
-    
+
     def make_gauge(self, name, func):
         self.gauges[name] = func
-    
+
     def fork(self):
         collection = StatsCollection()
         self.forked_collections.append(collection)

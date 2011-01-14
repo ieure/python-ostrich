@@ -29,21 +29,21 @@ class StatsTimeSeriesResource(StatsResource):
         Resource.__init__(self)
         self.collector = TimeSeriesCollector()
         self.collector.start_twisted(collect_every=collect_every)
-        
+
         self.putChild('graph', static.Data(GRAPH_HTML.strip(), "text/html"))
         self.putChild('graph_data', TimeSeriesDataResource(self.collector))
         self.putChild('combined', TimeSeriesCombinedResource(self.collector))
-    
+
     # def render_GET(self, request):
     #     reset = int(request.args.get('reset', [0])[0])
     #     return json.dumps(stats.stats(reset=reset), default=stats.json_encoder)
 
 class TimeSeriesDataResource(Resource):
     isLeaf = True
-    
+
     def __init__(self, collector):
         self.collector = collector
-    
+
     def render_GET(self, request):
         if len(request.postpath) == 0:
             return respond(request, {'keys': self.collector.keys(), 'stats': self.collector.stats.stats()})
@@ -54,7 +54,7 @@ class TimeSeriesDataResource(Resource):
                 return v
 
             name = '/'.join(request.postpath)
-            
+
             try:
                 output = [(date, convert(value)) for date, value in self.collector.get(name)]
             except KeyError:
@@ -63,10 +63,10 @@ class TimeSeriesDataResource(Resource):
 
 class TimeSeriesCombinedResource(Resource):
     isLeaf = True
-    
+
     def __init__(self, collector):
         self.collector = collector
-    
+
     def render_GET(self, request):
         if len(request.postpath) == 0:
             data = {}

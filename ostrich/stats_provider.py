@@ -6,15 +6,15 @@ class StatsProvider(object):
     def time(self, name):
         """Returns a Timer that logs the duration, in milliseconds, with the given name."""
         return Timer(self, name)
-    
+
     def time_ns(self, name):
         """Returns a Timer that logs the duration, in nanoseconds, with the given name.
-        
+
         When using nanoseconds, be sure to encode your field with that fact. Consider
         using the suffix `_ns` in your field.
         """
         return Timer(self, name, nano=True)
-    
+
     def stats(self, reset=False):
         return dict(counters=self.get_counter_stats(reset), timings=self.get_timing_stats(reset))
 
@@ -24,16 +24,16 @@ class StatsProvider(object):
 
     def add_timing(self, name, timing):
         return 0
-    
+
     def incr(self, name, count=1):
         return count
-    
+
     def get_counter_stats(self, reset=False):
         return {}
-    
+
     def get_timing_stats(self, reset=False):
         return {}
-    
+
     def clear_all(self):
         pass
 

@@ -13,7 +13,7 @@ class Timing(object):
         self.mean = 0.0
         self.partial_variance = 0.0
         self.lock = threading.Lock()
-    
+
     def clear(self):
         """Resets the state of this Timing. Clears the durations and counts
         collected so far.
@@ -29,7 +29,7 @@ class Timing(object):
             return self.add_timing_stat(n)
         else:
             return self.add_duration(n)
-    
+
     def add_duration(self, n):
         """Adds a duration to our current Timing."""
         with self.lock:
@@ -49,7 +49,7 @@ class Timing(object):
                 # TODO: warning?
                 pass
             return self.count
-    
+
     def add_timing_stat(self, timing_stat):
         """Add a summarized set of timings."""
         with self.lock:
@@ -66,7 +66,7 @@ class Timing(object):
                 self.min = min(self.min, timing_stat.min)
                 if timing_stat.histogram is not None:
                     self.histogram.merge(timing_stat.histogram)
-    
+
     def get(self, reset=False):
         """Returns a TimingStat for the measured event."""
         with self.lock:
@@ -82,7 +82,7 @@ class Timing(object):
 class TimingStat(object):
     """A pre-calculated timing. If you have timing stats from an external source but
     still want to report them via the Stats interface, use this.
-       
+
     Partial variance is `(count - 1)(s^2)`, or `sum(x^2) - sum(x) * mean`.
     """
     def __init__(self, count=0, max=0, min=0, mean=0.0, partial_variance=0.0, histogram=None):
@@ -95,7 +95,7 @@ class TimingStat(object):
         self.variance = (partial_variance / (count - 1)) if count > 1 else 0.0
         self.std_dev = round(math.sqrt(self.variance))
         self.histogram = histogram
-    
+
     def __eq__(self, other):
         return self.count == other.count and self.max == other.max and \
                self.min == other.min and self.average == other.average and self.variance == other.variance
@@ -110,11 +110,11 @@ class TimingStat(object):
                 histogram = histogram[:-1]
             d['histogram'] = histogram
         return d
-    
+
     def to_dict_no_histogram(self):
         return dict(count=self.count, maximum=self.max, minimum=self.min,
                     average=self.average, standard_deviation=long(self.std_dev))
-    
+
     def to_dict(self, percentiles=True, raw_histogram=False):
         d = self.to_dict_no_histogram()
         if self.histogram:
@@ -143,6 +143,6 @@ class TimingStat(object):
 
     def __repr__(self):
         return self.__str__()
-    
+
     def __str__(self):
         return "(" + ", ".join(["%s=%d" % (k, v) for k, v in sorted(self.to_dict().items())]) + ")"
